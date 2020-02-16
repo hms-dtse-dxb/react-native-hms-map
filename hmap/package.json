@@ -1,0 +1,22 @@
+{
+  "name": "hmap",
+  "version": "0.0.1",
+  "description": "A wrapper for the Huawei's native MAP kit SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": {
+    "name": "Younes Megaache, Muhammad Mudasir Sharif",
+    "email": "younes.megaache@huawei.com,muhammad.mudasir.sharif@huawei.com"
+  },
+  "license": "",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  },
+  "dependencies": {},
+  "types": "types/index.d.ts"
+}
