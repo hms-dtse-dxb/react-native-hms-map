@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A wrapper for the Huawei's native MAP kit SDK",
   "main": "index.js",
+  "licenses": ["Apache 2.0"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
