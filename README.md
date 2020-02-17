@@ -14,10 +14,16 @@ This library is wrapper for Huawei's map, it will only work on android devices w
 
 ## Installation
 
-Install the library from npm:
+After [configuration](configuration.md), install the library from npm:
 
 ```sh
 npm install react-native-maps --save
+```
+
+then
+
+```sh
+react-native link
 ```
 
 The library ships with platform native code that needs to be compiled
