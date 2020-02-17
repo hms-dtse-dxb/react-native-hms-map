@@ -8,7 +8,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 
-import HMSMap from 'hmap';
+import HMSMap from 'react-native-hms-map';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const DEFAULT_IMAGE =
@@ -47,12 +47,7 @@ export default class App extends Component {
       isReady: false,
       setMyLocationEnabled: false,
       markers: [],
-      selectedMarker: {
-        latitude: '0',
-        longitude: '0',
-        title: null,
-        description: 'null',
-      },
+      selectedMarker: {},
     };
   }
 
@@ -179,7 +174,7 @@ export default class App extends Component {
   };
 
   randomizeSelectedMarkerCoordinate = () => {
-    if (this.state.selectedMarker.title === null) {
+    if (!this.state.selectedMarker.id) {
       return;
     }
     //update selectedMarker's coordinate
@@ -220,6 +215,7 @@ export default class App extends Component {
     this.refs.mapRef.clear();
     this.setState({
       markers: [],
+      selectedMarker: {},
     });
   };
 

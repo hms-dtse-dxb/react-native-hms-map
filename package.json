@@ -7,15 +7,16 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .", 
+    "lint": "eslint .",
     "watch-lib": "wml start",
+    "zip-it":"git archive --format zip --output master.zip master",
     "clean": "del %appdata%\\Temp\\react-native-* & cd android & gradlew clean & cd .. & del node_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache",
     "clean2": "del %appdata%\\Temp\\react-native-*  & del nofde_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache"
   },
   "dependencies": {
-    "hmap": "file:hmap",
     "react": "16.9.0",
-    "react-native": "0.61.5"
+    "react-native": "0.61.5",
+    "react-native-hms-map": "file:react-native-hms-map"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

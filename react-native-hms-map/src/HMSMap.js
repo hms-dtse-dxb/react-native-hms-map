@@ -162,10 +162,11 @@ export default class HMSMap extends Component {
       <HMSMapView
         ref="mapView"
         // props
-        // uiSettings={this.state.uiSettings}
-        // cameraOptions={this.state.cameraOptions}
-        // defaultMarkerImage={this.state.defaultMarkerImage}
-        // myLocationEnabled={this.state.myLocationEnabled}
+        uiSettings={this.state.uiSettings}
+        cameraOptions={this.state.cameraOptions}
+        defaultMarkerImage={this.state.defaultMarkerImage}
+        myLocationEnabled={this.state.myLocationEnabled}
+        autoUpdateCamera={this.state.autoUpdateCamera}
         // private
         addMarker={this.state.addMarker}
         addMarkers={this.state.addMarkers}

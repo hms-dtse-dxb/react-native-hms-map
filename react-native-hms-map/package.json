@@ -1,5 +1,5 @@
 {
-  "name": "hmap",
+  "name": "react-native-hms-map",
   "version": "0.0.1",
   "description": "A wrapper for the Huawei's native MAP kit SDK",
   "main": "index.js",

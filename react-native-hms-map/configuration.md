@@ -199,30 +199,31 @@ dependencies {
   ![Image description](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/img/c095d0fad96d906e.png)
 
 - Add the signature configuration in the android directory of build.gradle file
-  '''
+
+```groovy
   signingConfigs {
-  release {
-  storeFile file('HmsDemo.jks')
-  keyAlias 'hmsdemo'
-  keyPassword '123456'
-  storePassword '123456'
-  v1SigningEnabled true
-  v2SigningEnabled true
-  }
-  }
+    release {
+        storeFile file('HmsDemo.jks')
+        keyAlias 'hmsdemo'
+        keyPassword '123456'
+        storePassword '123456'
+        v1SigningEnabled true
+        v2SigningEnabled true
+    }
+}
 
 buildTypes {
-release {
-signingConfig signingConfigs.release
-minifyEnabled false
-proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    release {
+        signingConfig signingConfigs.release
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+    debug {
+        signingConfig signingConfigs.release
+        debuggable true
+    }
 }
-debug {
-signingConfig signingConfigs.release
-debuggable true
-}
-}
-'''
+```
 
 ![Image description](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/img/f4ff63334c45568f.png)
 
