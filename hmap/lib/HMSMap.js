@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import {
-  requireNativeComponent,
-  Text,
-  View,
-  UIManager,
-  findNodeHandle,
-} from 'react-native';
+import { requireNativeComponent, UIManager, findNodeHandle } from 'react-native';
 import PropTypes from 'prop-types';
 import bridgeOps from './bridgeOps';
 
@@ -15,22 +9,20 @@ const HMSMapView = requireNativeComponent('HMSMapView', HMSMap, {
     onMapPress: true,
     onMapLongPress: true,
     onMarkerPress: true,
-    onMarkerLongPress: true,
   },
 });
 // const HMSMapView = requireNativeComponent('HMSMapView');
 //new
 export default class HMSMap extends Component {
-  r;
   constructor(props) {
     super(props);
     this.state = {};
     //this.COMMANDS = UIManager.HMSMapView.Commands;
     this.COMMANDS = {
       clear: 'clear',
-      animateToCoordinate: 'animateToCoordinate',
+      animateCameraToCoordinate: 'animateCameraToCoordinate',
       animateMarkerToCoordinate: 'animateMarkerToCoordinate',
-      animateToRegion: 'animateToRegion',
+      animateCameraToRegion: 'animateCameraToRegion',
     };
     //  console.log(UIManager.HMSMapView.Commands);
   }
@@ -44,9 +36,6 @@ export default class HMSMap extends Component {
 
   onMapPress = (data) => bridgeOps.onMapPress(this.props, data);
 
-  onMarkerLongPress = (data) =>
-    bridgeOps.onMarkerLongPress(this.props.onMarkerLongPress, data);
-
   /** JAVASCRIPT -> JAVA */
 
   addMarker = (addMarker) => this.setState({ addMarker });
@@ -56,6 +45,8 @@ export default class HMSMap extends Component {
   setMarkers = (setMarkers) => this.setState({ setMarkers });
 
   setMyLocationEnabled = (myLocationEnabled) => this.setState({ myLocationEnabled });
+
+  setAutoUpdateCamera = (autoUpdateCamera) => this.setState({ autoUpdateCamera });
 
   setCameraOptions = (cameraOptions) => this.setState({ cameraOptions });
 
@@ -70,19 +61,26 @@ export default class HMSMap extends Component {
     this.sendCommand(this.COMMANDS.clear);
   }
 
-  animateToCoordinate(lat, lng, zoom) {
-    lat = +lat;
-    lng = +lng;
+  animateCameraToCoordinate(latitude, longitude, zoom) {
+    latitude = 0 + latitude;
+    longitude = 0 + longitude;
     console.log('animate to coordinate');
-    this.sendCommand2(this.COMMANDS.animateToCoordinate, [{ lat, lng }, zoom]);
+    this.sendCommand2(this.COMMANDS.animateCameraToCoordinate, [
+      { latitude, longitude },
+      zoom,
+    ]);
   }
-  //array of coordinates [{lat,lng},{lat2,lng2}...];
-  animateToRegion(coordinates, zoom) {
-    this.sendCommand2(this.COMMANDS.animateToRegion, [coordinates, zoom]);
+  //array of coordinates [{latitude,longitude},{lat2,lng2}...];
+  animateCameraToRegion(coordinates, zoom) {
+    this.sendCommand2(this.COMMANDS.animateCameraToRegion, [coordinates, zoom]);
   }
 
-  animateMarkerToCoordinate(markerId, lat, lng) {
-    this.sendCommand2(this.COMMANDS.animateMarkerToCoordinate, [markerId, lat, lng]);
+  animateMarkerToCoordinate(markerId, latitude, longitude) {
+    this.sendCommand2(this.COMMANDS.animateMarkerToCoordinate, [
+      markerId,
+      latitude,
+      longitude,
+    ]);
   }
 
   sendCommand(command) {
@@ -118,7 +116,6 @@ export default class HMSMap extends Component {
         onMapPress={this.onMapPress}
         onMarkerPress={this.onMarkerPress}
         onMapLongPress={this.onMapLongPress}
-        onMarkerLongPress={this.onMarkerLongPress}
       />
     );
   }

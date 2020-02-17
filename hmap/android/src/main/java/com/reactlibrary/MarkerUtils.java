@@ -16,28 +16,40 @@ import com.huawei.hms.maps.model.Marker;
 public class MarkerUtils {
 
 
+    /**
+     * Animate (move) a marker to a new position on the map
+     * @param marker the marker that will animated (moved)
+     * @param latitude new LATITUDE of the coordinate (location) where the marker will move
+     * @param longitude new longitude of the coordinate (location) where the marker will move
+     */
     public static void animateMarkerToCoordinate(final Marker marker ,
-                                                double lat,
-                                                double lng
+                                                double latitude,
+                                                double longitude
                                                 ){
-      animateMarkerToCoordinate(marker, new LatLng(lat, lng), new LatLngInterpolator.LinearFixed());
-        //animateMarkerToCoordinate2(marker,new LatLng(lat,lng));
-      //  animateMarker(marker,  lat , lng    );
+    //  animateMarkerToCoordinate(marker, new LatLng(LATITUDE, longitude), new LatLngInterpolator.LinearFixed());
+        //animateMarkerToCoordinate2(marker,new LatLng(LATITUDE,longitude));
+         animateMarker(marker,  latitude , longitude    );
     }
 
 
-
+    /**
+     * Animate the change in position of the marker from its original coordiante, to a new coordinate
+     * with a linear interpolator, for 1 second
+     * @param marker the marker that will animated (moved)
+     * @param latitude new LATITUDE of the coordinate (location) where the marker will move
+     * @param longitude new longitude of the coordinate (location) where the marker will move
+     */
     public static void animateMarker(final Marker marker,
-                                     double lat,
-                                     double lng ) {
+                                     double latitude,
+                                     double longitude ) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
 
-        LatLng toPosition = new LatLng(lat,lng  );
+        LatLng toPosition = new LatLng(latitude,longitude  );
 
         final LatLng startLatLng = new LatLng(marker.getPosition().latitude,marker.getPosition().longitude);
 
-        final long duration = Constants.MARKER_ANIMATE_DURATION;
+        final long duration = Constants.MARKER_ANIMATION_DURATION;
         final Interpolator interpolator = new LinearInterpolator();
         handler.post(new Runnable() {
             @Override
@@ -45,11 +57,11 @@ public class MarkerUtils {
                 long elapsed = SystemClock.uptimeMillis() - start;
                 float t = interpolator.getInterpolation((float) elapsed
                         / duration);
-                double lng = t * toPosition.longitude + (1 - t)
+                double longitude = t * toPosition.longitude + (1 - t)
                         * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
+                double latitude = t * toPosition.latitude + (1 - t)
                         * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
+                marker.setPosition(new LatLng(latitude, longitude));
                 if (t < 1.0) {
                     // Post again 16ms later.
                     handler.postDelayed(this, 16);
@@ -98,14 +110,14 @@ public class MarkerUtils {
         class LinearFixed implements LatLngInterpolator {
             @Override
             public LatLng interpolate(float fraction, LatLng a, LatLng b) {
-                double lat = (b.latitude - a.latitude) * fraction + a.latitude;
+                double latitude = (b.latitude - a.latitude) * fraction + a.latitude;
                 double lngDelta = b.longitude - a.longitude;
                 // Take the shortest path across the 180th meridian.
                 if (Math.abs(lngDelta) > 180) {
                     lngDelta -= Math.signum(lngDelta) * 360;
                 }
-                double lng = lngDelta * fraction + a.longitude;
-                return new LatLng(lat, lng);
+                double longitude = lngDelta * fraction + a.longitude;
+                return new LatLng(latitude, longitude);
             }
         }
     }

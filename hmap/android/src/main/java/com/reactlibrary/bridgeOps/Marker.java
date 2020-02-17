@@ -16,34 +16,39 @@ import com.reactlibrary.MarkerUtils;
 import java.util.Map;
 
 import static com.reactlibrary.Constants.EVENT_MARKER_PRESS;
+import static com.reactlibrary.Constants.LATITUDE;
+import static com.reactlibrary.Constants.LONGITUDE;
 import static com.reactlibrary.Constants.MARKER_DESCRIPTION;
+import static com.reactlibrary.Constants.MARKER_ID;
+import static com.reactlibrary.Constants.MARKER_TITLE;
 
 
 public class Marker {
 
     /**
      * send marker pressed event to react native
-     * @param id      the order of the marker in the array list
-     * @param lat     latitude of the marker
-     * @param lng     longitude of the marker
-     * @param title   title of the marker
-     * @param snippet snippet of the marker
+     *
+     * @param id          the order of the marker in the array list
+     * @param latitude    LATITUDE of the marker
+     * @param longitude   longitude of the marker
+     * @param title       title of the marker
+     * @param description snippet of the marker
      */
     public static void onMarkerPress(ReactContext reactContext,
                                      int id,
                                      int markerId,
-                                     double lat,
-                                     double lng,
+                                     double latitude,
+                                     double longitude,
                                      String title,
-                                     String snippet
+                                     String description
     ) {
         WritableMap data = Arguments.createMap();
 
-        data.putInt("id", markerId);
-        data.putDouble("lat", lat);
-        data.putDouble("lng", lng);
-        data.putString("title", title);
-        data.putString(MARKER_DESCRIPTION, snippet);
+        data.putInt(MARKER_ID, markerId);
+        data.putDouble(LATITUDE, latitude);
+        data.putDouble(LONGITUDE, longitude);
+        data.putString(MARKER_TITLE, title);
+        data.putString(MARKER_DESCRIPTION, description);
 
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                 id,
@@ -53,25 +58,26 @@ public class Marker {
 
     /**
      * send marker long pressed event to react native
-     * @param id      the order of the marker in the array list
-     * @param lat     latitude of the marker
-     * @param lng     longitude of the marker
-     * @param title   title of the marker
+     *
+     * @param id          the order of the marker in the array list
+     * @param latitude    LATITUDE of the marker
+     * @param longitude   longitude of the marker
+     * @param title       title of the marker
      * @param description snippet of the marker
      */
 
     public static void onMarkerLongPress(ReactContext reactContext,
                                          int id,
-                                         double lat,
-                                         double lng,
+                                         double latitude,
+                                         double longitude,
                                          String title,
                                          String description) {
         WritableMap data = Arguments.createMap();
 
-        data.putInt("id", id);
-        data.putDouble("lat", lat);
-        data.putDouble("lng", lng);
-        data.putString("title", title);
+        data.putInt(MARKER_ID, id);
+        data.putDouble(LONGITUDE, latitude);
+        data.putDouble(LATITUDE, longitude);
+        data.putString(MARKER_TITLE, title);
         data.putString(MARKER_DESCRIPTION, description);
 
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
@@ -80,16 +86,24 @@ public class Marker {
                 data);
     }
 
-    public static void animateMarkerToCoordinate(Map<Integer,com.huawei.hms.maps.model.Marker> markers, ReadableArray args){
-       if(args == null ){
-           return;
-       }
-            int id = args.getInt(0);
-            double lat= args.getDouble(1);
-            double lng = args.getDouble(2);
-        Log.d(MapHmsManager.TAG  , "id = " + id );
+    /**
+     * command received from react native to Animate (move) a marker to a new position on the map
+     *
+     * @param markers the marker that will animated (moved)
+     * @param args    array of argument contains: markerId and coordinates of the new location
+     */
+    public static void animateMarkerToCoordinate(Map<Integer, com.huawei.hms.maps.model.Marker> markers,
+                                                 ReadableArray args  ) {
+        if (args == null) {
+            return;
+        }
+        int id = args.getInt(0);
+        double latitude = args.getDouble(1);
+        double longitude = args.getDouble(2);
+        Log.d(MapHmsManager.TAG, "id = " + id);
 
-        MarkerUtils.animateMarkerToCoordinate (markers.get(id) , lat , lng );
-
+        MarkerUtils.animateMarkerToCoordinate(markers.get(id), latitude, longitude);
     }
+
+
 }

@@ -1,50 +1,233 @@
-# react-native-hms-map
+# react-native-hms-maps [![npm version](https://img.shields.io/npm/v/react-native-hms-maps.svg?style=flat)](https://www.npmjs.com/package/react-native-hms-maps)
 
-## TODO:
+React Native HMS Map component for Android devices with Huawei mobile services (Huawei/Honor)
 
-- ADD SAFETY TESTs
-- Wrappe more features
-- Improve documentation
-- Add support of children: ex: `<hmap> <marker/> <marker/> <circle/> </hmap>`
-- Migrate to typescript
+## Installation
 
-## Getting started
+See [Installation Instructions](docs/installation.md).
 
-`$ npm install react-native-hms-map --save`
+## Important!
 
-### Mostly automatic installation
-
-`$ react-native link react-native-hms-map`
-
-### HMS configuration
-
-#### register the app
-
-#### download json
-
-#### add plugin
-
-Android
-
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-
-- Add `import com.reactlibrary.RNChromeHmsPackage;` to the imports at the top of the file
-- Add `new RNChromeHmsPackage()` to the list returned by the `getPackages()` method
-
-2. Append the following lines to `android/settings.gradle`:
-   ```
-   include ':react-native-hms-map'
-   project(':react-native-hms-map').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-hms-map/android')
-   ```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-   ```
-     compile project(':react-native-hms-map')
-   ```
+This library is wrapper for Huawei's map, it will only work on android devices with Huawei mobile services, it does not contain all features and APIs of the official native JAVA SDK.
 
 ## Usage
 
-map : onMapReady, cameraConfig , uiOptions, mapPress, mapLongPress,
-marker: add marker, remove marker, animateMarker, markerPress, markerLongPress, clearAll
-this library does not wrap all of huawei map features, please do request any features of the native app that you want to see in this library, you can find the contact information in the package.json#author
+```js
+import MapView from 'react-native-hms-maps';
+```
 
-zoom: 1: World 5: Landmass/continent 10: City 15: Streets 20: Buildings
+or
+
+```js
+var MapView = require('react-native-hms-maps');
+```
+
+This MapView component is built so that features on the map (such as Markers, Polygons, etc.) are
+props of the map. This can be changed in future releases to provide an intuitive and react-like API.
+
+### Rendering a Map with an initial region
+
+```jsx
+<HMSMap
+  cameraOptions={{
+    zoom: 5,
+    latitude: 25,
+    longitude: 55,
+  }}
+/>
+```
+
+zoom must an number (integer) in range [1,20],some zoom level:
+
+```JS
+const ZOOM_LEVELS = {
+WORLD: 1,
+CONTINENT: 5,
+CITY: 10,
+STREET: 15,
+BUILDING: 20,
+};
+```
+
+### listening to map press event
+
+```jsx
+onMapPress = (coordinate) => {
+  console.log('Map tapped', coordinate);
+};
+<HMSMap onMapPress={this.onMarkerPress} />;
+```
+
+### listening to map long press event
+
+```jsx
+onMapLongPress = (coordinate) => {
+  console.log('Map long pressed', coordinate);
+};
+<HMSMap onMapLongPress={this.onMapLongPress} />;
+```
+
+### Rendering a list of markers on a map
+
+```jsx
+<HMSMap cameraOptions={this.cameraOptions} markers={this.state.markers} />
+```
+
+or :
+
+```jsx
+renderMarkers = () => {
+  this.refs.mapView.setMarkers(this.markers);
+};
+
+<HMSMap
+  ref="mapView"
+  cameraOptions={this.cameraOptions}
+  onMapReady={this.renderMarkers}
+/>;
+```
+
+### Rendering a Marker with a custom image
+
+```jsx
+defaultImage = '../assets/defaultPin.png';
+this.markers =[
+   {
+      id:1,
+      latitude:20,
+      longitude:20,
+      description:"this marker will be drawn with pin.png image"
+      image: '../assets/specialPin.png'
+   },  {
+      id:1,
+      latitude:20,
+      longitude:20,
+      description:"this marker will be shown with default image"
+   }
+]
+
+<HMSMap
+ cameraOptions={this.cameraOptions}
+  markers={this.state.markers} />
+```
+
+### listening to marker press event
+
+```jsx
+onMarkerPress = (marker) => {
+  console.log('Marker pressed!', marker);
+};
+<HMSMap markers={this.state.markers} onMarkerPress={this.onMarkerPress} />;
+```
+
+### animate marker to new location
+
+```jsx
+markers = [{
+     {
+      id:1,
+      latitude:20,
+      longitude:20,
+   }
+}];
+newLatitude = 30;
+newLongitude = 30;
+zoomLevel = 8;
+
+animatePressedMarker = marker =>{
+  const [newLatitude , newLongitude ] = [this.randomLatitude(),this.randomLongitude()];
+  //animate the marker on the map to the new position
+  this.refs.hmsMap.animateMarkerToCoordinate(marker.id,this.newLatitude,this.newLongitude);
+
+  //find pressed marker on the list
+  const listItem = this.markers.find( m => m.id === marker.id );
+
+  //update the marker with the new coordinates
+  listItem.latitude = newLatitude;
+  listItem.longitude = newLongitude;
+
+  //you can move the camera to the new position of the marker
+  this.refs.mapRef.animateCameraToCoordinate(newLat, newLng, zoomLevel;
+}
+
+ randomLatitude = () => {
+  return (Math.random() * -90).toFixed(5) * 1;
+}
+
+ randomLongitude =()=> {
+  return (Math.random() * -180).toFixed(5) * 1;
+}
+
+render() {
+  return (
+    <HMSMap ref='hmsMap' markers={this.markers} onMarkerPress={this.animatePressedMarker}  />;
+  );
+}
+```
+
+### Map's UI settings
+
+```jsx
+<HMSMap
+  uiSettings={{
+    zoomControls: true,
+    myLocationButton: true,
+    mapToolbar: true,
+    compass: true,
+    indoorLevelPicker: true,
+  }}
+/>
+```
+
+### HMSMap with current available features:
+
+```jsx
+onMapReady = () => {
+  console.log('map is ready');
+};
+onMapPress = (coordinate) => {
+  console.log('map is ready');
+};
+onMapLongPress = (coordinate) => {
+  console.log('map is ready');
+};
+onMarkerPress = (marker) => {
+  console.log('marker pressed');
+};
+
+<HMSMapView
+  ref="mapView"
+  // props
+  uiSettings={{
+    zoomControls: true,
+    myLocationButton: true,
+    mapToolbar: true,
+    compass: true,
+    indoorLevelPicker: true,
+  }}
+  cameraOptions={{
+    zoom: 5,
+    latitude: 25,
+    longitude: 55,
+  }}
+  autoUpdateCamera={true}
+  defaultMarkerImage={'assets/pin.png'}
+  myLocationEnabled={true}
+  markers={this.state.marker}
+  onMapReady={this.onMapReady}
+  onMapPress={this.onMapPress}
+  onMarkerPress={this.onMarkerPress}
+  onMapLongPress={this.onMapLongPress}
+/>;
+```
+
+## Example:
+
+To run example:
+
+```bash
+npm i
+npm start
+npm run android
+
+```

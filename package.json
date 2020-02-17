@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "watch-lib":"wml start",
+    "zip-it":"del master.zip & git archive master"
+    "watch-lib": "wml start",
     "clean": "del %appdata%\\Temp\\react-native-* & cd android & gradlew clean & cd .. & del node_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache",
     "clean2": "del %appdata%\\Temp\\react-native-*  & del node_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache"
   },

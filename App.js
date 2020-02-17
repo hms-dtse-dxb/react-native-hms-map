@@ -28,8 +28,8 @@ const ZOOM = {
 export default class App extends Component {
   cameraOptions = {
     zoom: 5,
-    lat: 25,
-    lng: 55,
+    latitude: 25,
+    longitude: 55,
   };
 
   uiSettings = {
@@ -48,8 +48,8 @@ export default class App extends Component {
       setMyLocationEnabled: false,
       markers: [],
       selectedMarker: {
-        lat: '0',
-        lng: '0',
+        latitude: '0',
+        longitude: '0',
         title: null,
         description: 'null',
       },
@@ -81,6 +81,7 @@ export default class App extends Component {
   };
 
   addMarkers = () => {
+    this.refs.mapRef.setUiSettings(this.uiSettings);
     console.log(this.state.isReady);
     if (!this.state.isReady) {
       return;
@@ -91,8 +92,8 @@ export default class App extends Component {
       id: lastId,
       title: 'this is title ' + lastId,
       description: 'this marker was set from function map#addMarkers' + lastId++,
-      lat: randLat(),
-      lng: randLng(),
+      latitude: randLat(),
+      longitude: randLng(),
     }));
 
     this.refs.mapRef.addMarkers(newMarkers);
@@ -104,8 +105,8 @@ export default class App extends Component {
     });
 
     // move camera to added markers
-    this.refs.mapRef.animateToRegion(
-      newMarkers.map((m) => ({ lat: m.lat, lng: m.lng })),
+    this.refs.mapRef.animateCameraToRegion(
+      newMarkers.map((m) => ({ latitude: m.latitude, longitude: m.longitude })),
       5,
     );
 
@@ -137,7 +138,7 @@ export default class App extends Component {
   };
 
   onMarkerPress = (marker) => {
-    console.log('marker pressed', marker.lat, marker.lng);
+    console.log('marker pressed', marker.latitude, marker.longitude);
     //  this.selectedMarkerIndex = marker.id;
     this.setSelectedMarker(marker);
   };
@@ -147,7 +148,11 @@ export default class App extends Component {
       selectedMarker: marker,
     });
 
-    this.refs.mapRef.animateToCoordinate(marker.lat, marker.lng, ZOOM.STATE);
+    this.refs.mapRef.animateCameraToCoordinate(
+      marker.latitude,
+      marker.longitude,
+      ZOOM.STATE,
+    );
   };
 
   onMapPress = () => {
@@ -161,8 +166,8 @@ export default class App extends Component {
     console.log('longPress coords', coordinates);
     const markerFromLongPress = {
       id: this.state.markers.length,
-      lat: coordinates.lat,
-      lng: coordinates.lng,
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude,
       title: 'FromLongPress' + this.state.markers.length,
       description: 'marker generated from long press',
       image: MARKER_FROM_LONG_PRESS_IMAGE,
@@ -183,8 +188,8 @@ export default class App extends Component {
     let newMarkers = [...this.state.markers];
     const temp = {
       id: this.state.selectedMarker.id,
-      lat: newLat,
-      lng: newLng,
+      latitude: newLat,
+      longitude: newLng,
       title: this.state.selectedMarker.title,
       description: this.state.selectedMarker.description,
       image: this.state.selectedMarker.image,
@@ -206,7 +211,7 @@ export default class App extends Component {
 
     //move the camera the new coordinates when the animation ends
     setTimeout(() => {
-      this.refs.mapRef.animateToCoordinate(newLat, newLng, ZOOM.STATE);
+      this.refs.mapRef.animateCameraToCoordinate(newLat, newLng, ZOOM.STATE);
     }, 500);
   };
 
@@ -225,9 +230,10 @@ export default class App extends Component {
         style={styles.map}
         // properties
         myLocationEnabled={this.state.setMyLocationEnabled}
-        defaultMarkerImage={this.DEFAULT_IMAGE}
+        defaultMarkerImage={DEFAULT_IMAGE}
         uiSettings={this.uiSettings}
         cameraOptions={this.cameraOptions}
+        autoUpdateCamera={false}
         //markers={this.state.markers}
         // events
         onMapReady={this.onMapReady}
@@ -280,8 +286,8 @@ export default class App extends Component {
         </Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           <Text style={styles.highlight}>
-            Position:( {this.state.selectedMarker.lat} {' , '}
-            {this.state.selectedMarker.lng})
+            Position:( {this.state.selectedMarker.latitude} {' , '}
+            {this.state.selectedMarker.longitude})
           </Text>
           <Button
             style={styles.random}

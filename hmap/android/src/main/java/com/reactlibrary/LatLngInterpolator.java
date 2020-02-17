@@ -39,9 +39,9 @@ public interface LatLngInterpolator {
             double y = a * cosFromLat * sin(fromLng) + b * cosToLat * sin(toLng);
             double z = a * sin(fromLat) + b * sin(toLat);
             // Converts interpolated vector back to polar.
-            double lat = atan2(z, sqrt(x * x + y * y));
-            double lng = atan2(y, x);
-            return new LatLng(toDegrees(lat), toDegrees(lng));
+            double latitude = atan2(z, sqrt(x * x + y * y));
+            double longitude = atan2(y, x);
+            return new LatLng(toDegrees(latitude), toDegrees(longitude));
         }
 
         private double computeAngleBetween(double fromLat, double fromLng, double toLat, double toLng) {

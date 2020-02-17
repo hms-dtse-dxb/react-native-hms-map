@@ -16,11 +16,9 @@ import com.huawei.hms.maps.model.LatLng;
 import com.huawei.hms.maps.model.BitmapDescriptor;
 import com.facebook.react.bridge.ReactContext;
 
-import android.widget.Toast;
-
-import com.huawei.hms.maps.model.LatLngBounds;
 import com.reactlibrary.bridgeOps.Marker;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -32,21 +30,15 @@ import java.util.Map;
 
 import static com.reactlibrary.Constants.COMMAND_ANIMATE_MARKER_TO_COORDINATE;
 import static com.reactlibrary.Constants.COMMAND_ANIMATE_MARKER_TO_COORDINATE_ID;
-import static com.reactlibrary.Constants.COMMAND_ANIMATE_TO_COORDINATE;
-import static com.reactlibrary.Constants.COMMAND_ANIMATE_TO_COORDINATE_ID;
-import static com.reactlibrary.Constants.COMMAND_ANIMATE_TO_REGION;
-import static com.reactlibrary.Constants.COMMAND_ANIMATE_TO_REGION_ID;
+import static com.reactlibrary.Constants.COMMAND_ANIMATE_CAMERA_TO_COORDINATE;
+import static com.reactlibrary.Constants.COMMAND_ANIMATE_CAMERA_TO_COORDINATE_ID;
+import static com.reactlibrary.Constants.COMMAND_ANIMATE_CAMERA_TO_REGION;
+import static com.reactlibrary.Constants.COMMAND_ANIMATE_CAMERA_TO_REGION_ID;
 import static com.reactlibrary.Constants.COMMAND_CLEAR;
 import static com.reactlibrary.Constants.COMMAND_CLEAR_ID;
-import static com.reactlibrary.Constants.ENABLE_COMPASS;
-import static com.reactlibrary.Constants.ENABLE_ZOOM_CONTROLS;
 import static com.reactlibrary.Constants.EVENTS;
-import static com.reactlibrary.Constants.LAT;
-import static com.reactlibrary.Constants.LNG;
-import static com.reactlibrary.Constants.MARKER_DESCRIPTION;
-import static com.reactlibrary.Constants.MARKER_ICON;
-import static com.reactlibrary.Constants.MARKER_ID;
-import static com.reactlibrary.Constants.MARKER_TITLE;
+import static com.reactlibrary.Constants.LATITUDE;
+import static com.reactlibrary.Constants.LONGITUDE;
 import static com.reactlibrary.Constants.UI_SETTINGS_COMPASS;
 import static com.reactlibrary.Constants.UI_SETTINGS_INDOOR_LEVEL_PICKER;
 import static com.reactlibrary.Constants.UI_SETTINGS_MAP_TOOLBAR;
@@ -63,6 +55,14 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
     private String defaultMarkerIconUrl;
     private BitmapDescriptor defaultMarkerIcon;
     private Map<Integer, com.huawei.hms.maps.model.Marker> markers = new HashMap<>();
+    public static int DEFAULT_ZOOM = 6;
+
+    //flags
+    private boolean autoUpdateCamera = false;
+    //these options are sent before the map is ready, so we save them to set them when the map is ready
+    private ReadableMap cameraOptions;
+    private ReadableMap uiSettings;
+    private ReadableArray markersProp;
 
     @Override
     public String getName() {
@@ -79,6 +79,7 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
         // onMount(mapView,true);
         mapView.onStart();
         mapView.onResume();
+
         return mapView;
     }
 
@@ -88,7 +89,10 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
 
         com.reactlibrary.bridgeOps.Map.onMapReady(getReactContext(), getId());
         registerEvents();
-        Log.e(TAG, "Map Ready to use callback");
+        Log.d(TAG, "Map is Ready");
+        setCameraOptions(mapView, cameraOptions);
+        setUiSettings(mapView, uiSettings);
+        setMarkers(mapView, markersProp);
     }
 
     /******************************************************************
@@ -97,113 +101,52 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
 
 
     /**
-     * marker received from react native to be drawn on the map
+     * Add a marker to existing set of marker on the map
      *
      * @param mapView instance of the mapView
-     * @param value   marker to be received when the component's state in changed on
-     *                the react native side
+     * @param value   the marker received from javascript to be drawn on the map
      */
     @ReactProp(name = "addMarker")
     public void addMarker(MapView mapView, ReadableMap value) {
-        Log.e(TAG, "addMarker"  );
-        if (huaweiMap == null) return;
-
-
-        if (value == null) {
+        Log.d(TAG, "addMarker" + " ,isValueNull= " + (value == null ? "true" : "false"));
+        if (huaweiMap == null) {
+            Log.e(TAG, "MapIsNotReady");
             return;
         }
+        MapUtils.addMarker(huaweiMap, value, markers, defaultMarkerIconUrl, defaultMarkerIcon, autoUpdateCamera);
 
-        double lat = value.getDouble(LAT);
-        double lng = value.getDouble(LNG);
-
-        String image = null, title = null, description = null;
-        if (value.hasKey(MARKER_ICON)) {
-            image = value.getString(MARKER_ICON);
-        }
-        if (value.hasKey(MARKER_TITLE)) {
-            title = value.getString(MARKER_TITLE);
-        }
-        if (value.hasKey(MARKER_DESCRIPTION)) {
-            description = value.getString(MARKER_DESCRIPTION);
-        }
-
-        MapUtils.createMarker(huaweiMap, markers, defaultMarkerIcon, value.getInt(MARKER_ID), lat, lng,
-                title, description, image);
     }
 
     /**
      * replace the existing markers on the map with new list of markers
      *
      * @param mapView instance of the mapView
-     * @param value   list of marker to be received when the component's state in
-     *                changed on the react native side
+     * @param value   list of markers received from javascript to be drawn on the map
      */
     @ReactProp(name = "addMarkers")
     public void addMarkers(MapView mapView, ReadableArray value) {
-        Log.e(TAG, "addMarkers "  );
-        if (huaweiMap == null) return;
-
-
-        if (value == null || value.size() == 0) {
+        Log.d(TAG, "addMarkers " + " ,isValueNull= " + (value == null ? "true" : "false"));
+        if (huaweiMap == null) {
+            Log.e(TAG, "MapIsNotReady");
             return;
         }
-        ReadableMap marker = null;
-        // huaweiMap.clear();
-
-        LatLngBounds.Builder bounds = new LatLngBounds.Builder();
-
-        for (int i = 0; i < value.size(); i++) {
-            marker = value.getMap(i);
-            if (marker == null)
-                continue;
-            double lat = marker.getDouble(LAT);
-            double lng = marker.getDouble(LNG);
-
-            String image = null, title = null, description = null;
-            if (marker.hasKey(MARKER_ICON)  ) {
-                image = marker.getString(MARKER_ICON);
-                if(image != null && image.equals(defaultMarkerIconUrl)){
-                    //marker icon equals the default icon,
-                    // set it to null to avoid download the same icon again
-                    image=  null ;
-                }
-            }
-            if (marker.hasKey(MARKER_TITLE)) {
-                title = marker.getString(MARKER_TITLE);
-            }
-            if (marker.hasKey(MARKER_DESCRIPTION)) {
-                description = marker.getString(MARKER_DESCRIPTION);
-            }
-            MapUtils.createMarker(huaweiMap,
-                    markers,
-                    defaultMarkerIcon,
-                    marker.getInt(MARKER_ID),
-                    lat,
-                    lng,
-                    title, description,
-                    image);
-            bounds.include(new LatLng(lat, lng));
-        }
-
-        Log.e(TAG, "add markers, data length: " + value.size() + " ,all: " + markers.size());
-
-        //  huaweiMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 7));
-        // selectMarker(null , marker);
+        MapUtils.addMarkers(huaweiMap, value, markers, defaultMarkerIconUrl, defaultMarkerIcon, autoUpdateCamera);
     }
 
 
     /**
-     * list of marker received from react native to be drawn on the map
+     * adds a list of markers to map, removing the existing ones if any
      *
      * @param mapView instance of the mapView
-     * @param value   list of marker to be received when the component's state in
-     *                changed on the react native side
+     * @param value   list of markers received from javascript to be drawn on the map
      */
     @ReactProp(name = "setMarkers")
     public void setMarkers(MapView mapView, ReadableArray value) {
-        Log.e(TAG, "setMarkers "  );
-        if (huaweiMap == null) return;
-
+        Log.d(TAG, "setMarkers " + " ,isValueNull= " + (value == null ? "true" : "false"));
+        if (huaweiMap == null) {
+            Log.e(TAG, "MapIsNotReady");
+            return;
+        }
         com.reactlibrary.bridgeOps.Map.clear(this.huaweiMap, this.markers);
         addMarkers(mapView, value);
     }
@@ -211,6 +154,7 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
 
     /**
      * list of marker received from react native to be drawn on the map
+     * same as {@link this#setMarkers(MapView, ReadableArray)}
      *
      * @param mapView instance of the mapView
      * @param value   list of marker to be received when the component's state in
@@ -218,96 +162,112 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
      */
     @ReactProp(name = "markers")
     public void markers(MapView mapView, ReadableArray value) {
-        Log.e(TAG, "markers "  );
-        Log.e(TAG, "markers "  );
-        Log.e(TAG, "markers "  );
-        Log.e(TAG, "markers "  );
-        Log.e(TAG, "markers "  );
-        if (huaweiMap == null) return;
-        this.setMarkers(mapView,value );
+        Log.d(TAG, "markers ,isValueNull= " + (value == null ? "true" : "false"));
+        markersProp = value;
+        if (huaweiMap == null || value == null) return;
+        this.setMarkers(mapView, value);
+
     }
+
     /**
+     * Show the user's current location on the map
+     *
      * @param mapView an instance of the mapView
      * @param value   the state from javascript that tells whether to show the
      *                current location on map or not
      */
     @ReactProp(name = "myLocationEnabled")
     public void setMyLocationEnabled(MapView mapView, boolean value) {
-        Log.e(TAG, "myLocationEnabled " + (value ? "true " : "false "));
-        if (huaweiMap == null) return;
+        Log.d(TAG, "myLocationEnabled " + (value ? "true " : "false "));
+        if (huaweiMap == null) {
+            Log.e(TAG, "MapIsNotReady");
+            return;
+        }
 
         huaweiMap.setMyLocationEnabled(value);
     }
 
     /**
-     * set the default icon for the markers,
-     * this will be set when the marker does not have an image specified
+     * Show the user's current location on the map
      *
-     * @param mapView
-     * @param value
+     * @param mapView an instance of the mapView
+     * @param value   the state from javascript that tells whether to show the
+     *                current location on map or not
+     */
+    @ReactProp(name = "autoUpdateCamera")
+    public void setAnimateCameraToMarkers(MapView mapView, boolean value) {
+        Log.d(TAG, "setAnimateCameraToMarkers" + (value ? "true " : "false "));
+        this.autoUpdateCamera = value;
+    }
+
+    /**
+     * Sets the default marker's image (icon) that overrides the default one (TomTom black marker)
+     * the marker should be used if the add marker(s) does not have an image (@see Marker#image)
+     * using large images cal impact the performance
+     *
+     * @param mapView an instance of the mapView
+     * @param value   the url of the image(icon) that will be the default marker image (icon)
      */
     @ReactProp(name = "defaultMarkerImage")
     public void setDefaultMarkerImage(MapView mapView, String value) {
         System.out.println("--------------------");
-        Log.e(TAG, "set defaultMarkerImage : " + value);
+        Log.d(TAG, "set defaultMarkerImage : " + value + " ,isValueNull= " + (value == null ? "true" : "false"));
 
         if (this.defaultMarkerIconUrl != null && this.defaultMarkerIconUrl.equals(value)) {
-            Log.e(TAG, "defaultMarkerUrl is already set");
+            Log.d(TAG, "defaultMarkerUrl is already set");
             return;
         }
         new Thread(() -> {
             try {
 
                 this.defaultMarkerIcon = MapUtils.markerIconFromUrl(value);
-                this.defaultMarkerIconUrl  = value;
+                this.defaultMarkerIconUrl = value;
             } catch (Exception e) {
-                Log.e(TAG, "failed to default marker icon: " + e.toString());
+                Log.d(TAG, "failed to default marker icon: " + e.toString());
                 e.printStackTrace();
 
             }
         }).start();
     }
 
-    // setZoomToNewMarkers
-    // setZoomToNewMarker
-
-
     /**
-     * setCameraOptions
+     * Set the initial camera options, including coordinates (location) and zoom
      *
-     * @param mapView
-     * @param value
+     * @param mapView instance of map view
+     * @param value   cameraOptions the object holding the camera options
      */
     @ReactProp(name = "cameraOptions")
     public void setCameraOptions(MapView mapView, ReadableMap value) {
-        Log.e(TAG, "set cameraOptions: " + value);
-        if (huaweiMap == null) return;
+        Log.d(TAG, "set cameraOptions: " + value + " ,isValueNull= " + (value == null ? "true" : "false"));
+        this.cameraOptions = value;
+        if (huaweiMap == null || value == null) return;
 
         int zoom = value.getInt("zoom");
-        double lat = value.getDouble(LAT);
-        double lng = value.getDouble(LNG);
-        LatLng position = new LatLng(lat, lng);
+        double latitude = value.getDouble(LATITUDE);
+        double longitude = value.getDouble(LONGITUDE);
+        LatLng position = new LatLng(latitude, longitude);
         this.huaweiMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoom));
     }
 
     /**
-     * setUiSettings: myLocationButton, zoomButtons, compass, indoor level picker,map toolbar
+     * Control the visibility of some of the map's UI (buttons and icons)
      *
-     * @param mapView
-     * @param value
+     * @param mapView instance of map view
+     * @param value   the object holding the UI settings (flags
      */
     @ReactProp(name = "uiSettings")
     public void setUiSettings(MapView mapView, ReadableMap value) {
-        Log.e(TAG, "set uiSettings: ");
-        if (huaweiMap == null) return;
+        Log.d(TAG, "set uiSettings: " + " ,isValueNull= " + (value == null ? "true" : "false"));
+        this.uiSettings = value;
+        if (huaweiMap == null || value == null) return;
 
         UiSettings uiSettings = this.huaweiMap.getUiSettings();
         Function<String, Boolean> getFlag = name -> {
             if (value.hasKey(name)) {
-                Log.e(TAG , name + " -> true ");
+                Log.d(TAG, name + " -> true ");
                 return value.getBoolean(name);
             }
-            Log.e(TAG , name + " -> false ");
+            Log.d(TAG, name + " -> false ");
             return false;
         };
         uiSettings.setZoomControlsEnabled(getFlag.apply(UI_SETTINGS_ZOOM_CONTROLS));
@@ -316,13 +276,6 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
         uiSettings.setMapToolbarEnabled(getFlag.apply(UI_SETTINGS_MAP_TOOLBAR));
         uiSettings.setIndoorLevelPickerEnabled(getFlag.apply(UI_SETTINGS_INDOOR_LEVEL_PICKER));
     }
-
-//    private boolean getFlag(ReadableMap map, String name) {
-//        if (map.hasKey(name)) {
-//            return map.getBoolean(name);
-//        }
-//        return false;
-//    }
 
     /**************** COMMANDS *****************/
 
@@ -334,9 +287,9 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
         // here is what you'll later use to access it in react-native.
         Map<String, Integer> map = MapBuilder.of();
         map.put(COMMAND_CLEAR_ID, COMMAND_CLEAR);
-        map.put(COMMAND_ANIMATE_TO_COORDINATE_ID,
-                COMMAND_ANIMATE_TO_COORDINATE);
-        map.put(COMMAND_ANIMATE_TO_REGION_ID, COMMAND_ANIMATE_TO_REGION);
+        map.put(COMMAND_ANIMATE_CAMERA_TO_COORDINATE_ID,
+                COMMAND_ANIMATE_CAMERA_TO_COORDINATE);
+        map.put(COMMAND_ANIMATE_CAMERA_TO_REGION_ID, COMMAND_ANIMATE_CAMERA_TO_REGION);
         map.put(COMMAND_ANIMATE_MARKER_TO_COORDINATE_ID, COMMAND_ANIMATE_MARKER_TO_COORDINATE);
         return map;
     }
@@ -345,19 +298,19 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
     public void receiveCommand(@NonNull MapView root, String commandId, @Nullable ReadableArray args) {
         //super.receiveCommand(root, commandId, args);
         //   Toast.makeText(getReactContext(),"command",Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "receivedCommand id:" + commandId);
+        Log.d(TAG, "receivedCommand id:" + commandId);
         if (args != null) {
-            Log.e(TAG, " args size: " + args.size());
+            Log.d(TAG, " args size: " + args.size());
         }
         switch (commandId) {
             case COMMAND_CLEAR_ID:
                 com.reactlibrary.bridgeOps.Map.clear(huaweiMap, markers);
                 break;
-            case COMMAND_ANIMATE_TO_COORDINATE_ID:
-                com.reactlibrary.bridgeOps.Map.animateToCoordinate(huaweiMap, args);
+            case COMMAND_ANIMATE_CAMERA_TO_COORDINATE_ID:
+                com.reactlibrary.bridgeOps.Map.animateCameraToCoordinate(huaweiMap, args);
                 break;
-            case COMMAND_ANIMATE_TO_REGION_ID:
-                com.reactlibrary.bridgeOps.Map.animateToRegion(huaweiMap, args);
+            case COMMAND_ANIMATE_CAMERA_TO_REGION_ID:
+                com.reactlibrary.bridgeOps.Map.animateCameraToRegion(huaweiMap, args);
                 break;
             case COMMAND_ANIMATE_MARKER_TO_COORDINATE_ID:
                 Marker.animateMarkerToCoordinate(markers, args);
@@ -379,7 +332,7 @@ public class MapHmsManager extends SimpleViewManager<MapView> implements OnMapRe
      * registers a click listener (callback) to be invoked when a marker is clicked
      */
     public void onMarkerClick() {
-        Log.e(TAG, "Marker Click");
+        Log.d(TAG, "Marker Click");
         huaweiMap.setOnMarkerClickListener(marker -> {
             Marker.onMarkerPress(getReactContext(), getId(), (int) marker.getTag(), marker.getPosition().latitude,
                     marker.getPosition().longitude, marker.getTitle(), marker.getSnippet());

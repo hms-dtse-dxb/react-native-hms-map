@@ -6,8 +6,8 @@ export const onMarkerPress = (props, event) => {
   }
   const marker = {
     id: data.id,
-    lat: data.lat,
-    lng: data.lng,
+    latitude: data.latitude,
+    longitude: data.longitude,
     title: data.title,
     description: data.description,
   };
@@ -18,9 +18,9 @@ export const onMarkerLongPress = (props, data) => {
   if (!props.onMarkerLongPress) {
     return;
   }
-  const latlng = {
-    lat: data.lat,
-    lng: data.lng,
+  const Coordinate = {
+    latitude: data.latitude,
+    longitude: data.longitude,
   };
-  props.onMarkerLongPress(latlng);
+  props.onMarkerLongPress(Coordinate);
 };

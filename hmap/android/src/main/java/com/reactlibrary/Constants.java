@@ -23,11 +23,11 @@ public class Constants {
     public static final String COMMAND_CLEAR_ID = "clear";
     public static final int COMMAND_CLEAR = 0;
 
-    public static final String COMMAND_ANIMATE_TO_COORDINATE_ID = "animateToCoordinate";
-    public static final int COMMAND_ANIMATE_TO_COORDINATE = 1;
+    public static final String COMMAND_ANIMATE_CAMERA_TO_COORDINATE_ID = "animateCameraToCoordinate";
+    public static final int COMMAND_ANIMATE_CAMERA_TO_COORDINATE = 1;
 
-    public static final String COMMAND_ANIMATE_TO_REGION_ID = "animateToRegion";
-    public static final int COMMAND_ANIMATE_TO_REGION = 2;
+    public static final String COMMAND_ANIMATE_CAMERA_TO_REGION_ID = "animateCameraToRegion";
+    public static final int COMMAND_ANIMATE_CAMERA_TO_REGION = 2;
 
     public static final String COMMAND_ANIMATE_MARKER_TO_COORDINATE_ID = "animateMarkerToCoordinate";
     public static final int COMMAND_ANIMATE_MARKER_TO_COORDINATE = 3;
@@ -35,8 +35,8 @@ public class Constants {
     public static final String MARKER_ID = "id",
             MARKER_TITLE = "title",
             MARKER_DESCRIPTION = "description",
-            LAT = "lat",
-            LNG = "lng",
+            LATITUDE = "latitude",
+            LONGITUDE = "longitude",
             MARKER_ICON = "image";
 
     public static final String UI_SETTINGS_ZOOM_CONTROLS = "zoomControls";
@@ -45,7 +45,7 @@ public class Constants {
     public static final String UI_SETTINGS_COMPASS = "compass";
     public static final String UI_SETTINGS_INDOOR_LEVEL_PICKER = "indoorLevelPicker";
 
-    public static final int MARKER_ANIMATE_DURATION = 500;
+    public static final int MARKER_ANIMATION_DURATION = 500;
 
 }
 
