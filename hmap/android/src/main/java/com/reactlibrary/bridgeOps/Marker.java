@@ -93,11 +93,14 @@ public class Marker {
      * @param args    array of argument contains: markerId and coordinates of the new location
      */
     public static void animateMarkerToCoordinate(Map<Integer, com.huawei.hms.maps.model.Marker> markers,
-                                                 ReadableArray args  ) {
+                                                 ReadableArray args) {
         if (args == null) {
             return;
         }
         int id = args.getInt(0);
+        if (markers.size() < 1 || !markers.containsKey(id)) {
+            return;
+        }
         double latitude = args.getDouble(1);
         double longitude = args.getDouble(2);
         Log.d(MapHmsManager.TAG, "id = " + id);

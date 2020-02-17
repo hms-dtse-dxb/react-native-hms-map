@@ -192,7 +192,8 @@ export declare function setMyLocationEnabled(value: boolean): void;
 /**
  * Automatically moves the animates (moves) the camera to the newly added marker(s)
  * @param value true to show the user's location, false otherwise
- */export declare function setAutoUpdateCamera(value:boolean):void;
+ */
+export declare function setAutoUpdateCamera(value:boolean):void;
 /**
  * Set the initial camera options, including coordinates (location) and zoom
  * @param cameraOptions the object holding the camera options  {@see CameraOptions}

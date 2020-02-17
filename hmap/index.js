@@ -1,3 +1,3 @@
-import HMSMap from './lib/index';
+import HMSMap from './src/index';
 
 export default HMSMap;
