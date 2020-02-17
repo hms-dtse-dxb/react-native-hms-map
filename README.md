@@ -8,9 +8,9 @@ React Native HMS Map component for Android devices with Huawei mobile services (
 
 See [configuration Instructions](configuration.md).
 
-## Important!
+## Important
 
-This library is wrapper for Huawei's map, it will only work on android devices with Huawei mobile services, it does not contain all features and APIs of the official native JAVA SDK.
+This library is wrapper for Huawei's map, it will only work on android devices with Huawei mobile services, it does not contain all features and APIs of the official native JAVA SDK. it can be used but it's still under development.
 
 ## Installation
 
