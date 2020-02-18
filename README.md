@@ -126,7 +126,7 @@ markers = [
 ];
 render(){
   return (
-    <HMSMap cameraOptions={this.cameraOptions} markers={this.markers} />;
+    <HMSMap markers={this.markers} />;
   );
 }
 ```
@@ -152,8 +152,7 @@ renderMarkers = () => {
 render(){
   return (
     <HMSMap
-      ref="mapView"
-      cameraOptions={this.cameraOptions}
+      ref="mapView" 
       onMapReady={this.renderMarkers}
     />;
   );
@@ -181,8 +180,7 @@ markers =[
 ];
 render() {
   return (
-      <HMSMap
-        cameraOptions={this.cameraOptions}
+      <HMSMap 
         defaultMarkerImage={this.defaultImage}
         markers={this.state.markers}
        />
@@ -218,8 +216,7 @@ markers = [
     longitude: -20,
    }
 ];
-newLatitude = 55;
-newLongitude = 25;
+
 zoomLevel = 8;
 
 animatePressedMarker = marker =>{
