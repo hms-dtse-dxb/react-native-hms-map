@@ -20,15 +20,35 @@ After [configuration](https://github.com/hms-dtse-dxb/react-native-hms-map/blob/
 npm i react-native-hms-map --save
 ```
 
-then
+The library ships with platform native code that needs to be compiled
+together with React Native. This requires you to configure your build
+tools.
 
 ```sh
 react-native link
 ```
 
-The library ships with platform native code that needs to be compiled
-together with React Native. This requires you to configure your build
-tools.
+> if your min sdk version is less then 19 (can be found in `android/build.gradle#buildscript.minSdkVersion`):
+> either: increase it to 19,
+> or: override the library settings (NOT RECOMMENDED)
+> go to `android/app/src/main/AndroidManifest.xml`
+> add the following line to root tag:
+>
+> ```xml
+> <manifest
+> [...]
+> xmlns:tools="http://schemas.android.com/tools">
+>
+> ```
+>
+> and in Application tag, add the following to override the library:
+>
+> ```xml
+>  <application
+>    [...]
+>    tools:overrideLibrary="com.reactlibrary"
+>  >
+> ```
 
 ## Usage
 
