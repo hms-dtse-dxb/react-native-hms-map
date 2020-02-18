@@ -8,16 +8,22 @@ React Native HMS Map component for Android devices with Huawei mobile services (
 
 See [configuration Instructions](configuration.md).
 
-## Important!
+## Important
 
-This library is wrapper for Huawei's map, it will only work on android devices with Huawei mobile services, it does not contain all features and APIs of the official native JAVA SDK.
+This library is wrapper for Huawei's map, it will only work on android devices with Huawei mobile services, it does not contain all features and APIs of the official native JAVA SDK. it can be used but it's still under development.
 
 ## Installation
 
-Install the library from npm:
+After [configuration](configuration.md), install the library from npm:
 
 ```sh
 npm install react-native-maps --save
+```
+
+then
+
+```sh
+react-native link
 ```
 
 The library ships with platform native code that needs to be compiled
@@ -27,7 +33,7 @@ tools.
 ## Usage
 
 ```js
-import MapView from 'react-native-hms-maps';
+import HMSMap from 'react-native-hms-maps';
 ```
 
 This MapView component is built so that features on the map (such as Markers, Polygons, etc.) are
@@ -63,7 +69,11 @@ BUILDING: 20,
 onMapPress = (coordinate) => {
   console.log('Map tapped', coordinate);
 };
-<HMSMap onMapPress={this.onMarkerPress} />;
+render(){
+  return (
+    <HMSMap onMapPress={this.onMarkerPress} />;
+  );
+}
 ```
 
 ### listening to map long press event
@@ -72,7 +82,11 @@ onMapPress = (coordinate) => {
 onMapLongPress = (coordinate) => {
   console.log('Map long pressed', coordinate);
 };
-<HMSMap onMapLongPress={this.onMapLongPress} />;
+render(){
+  return (
+    <HMSMap onMapLongPress={this.onMapLongPress} />;
+  );
+}
 ```
 
 ### Rendering a list of markers on a map
@@ -87,12 +101,16 @@ or :
 renderMarkers = () => {
   this.refs.mapView.setMarkers(this.markers);
 };
+render(){
+return (
+    <HMSMap
+      ref="mapView"
+      cameraOptions={this.cameraOptions}
+      onMapReady={this.renderMarkers}
+    />;
+  );
+}
 
-<HMSMap
-  ref="mapView"
-  cameraOptions={this.cameraOptions}
-  onMapReady={this.renderMarkers}
-/>;
 ```
 
 ### Rendering a Marker with a custom image

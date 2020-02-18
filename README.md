@@ -33,7 +33,7 @@ tools.
 ## Usage
 
 ```js
-import MapView from 'react-native-hms-maps';
+import HMSMap from 'react-native-hms-maps';
 ```
 
 This MapView component is built so that features on the map (such as Markers, Polygons, etc.) are
@@ -102,11 +102,13 @@ renderMarkers = () => {
   this.refs.mapView.setMarkers(this.markers);
 };
 render(){
-return (<HMSMap
-  ref="mapView"
-  cameraOptions={this.cameraOptions}
-  onMapReady={this.renderMarkers} />;
-);
+return (
+    <HMSMap
+      ref="mapView"
+      cameraOptions={this.cameraOptions}
+      onMapReady={this.renderMarkers}
+    />;
+  );
 }
 
 ```
