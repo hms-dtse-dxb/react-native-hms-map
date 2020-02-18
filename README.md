@@ -17,7 +17,7 @@ This library is wrapper for Huawei's map, it will only work on android devices w
 After [configuration](configuration.md), install the library from npm:
 
 ```sh
-npm install react-native-hms-maps --save
+npm i react-native-hms-map --save
 ```
 
 then

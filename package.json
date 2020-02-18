@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "watch-lib": "wml start",
     "zip-it": "git archive --format zip --output master.zip master",
+    "ur": "git add . & git commit -m \"updated readme\" & git github push master",
     "clean": "del %appdata%\\Temp\\react-native-* & cd android & gradlew clean & cd .. & del node_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache",
     "clean2": "del %appdata%\\Temp\\react-native-*  & del nofde_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache"
   },
