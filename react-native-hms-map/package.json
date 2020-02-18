@@ -1,6 +1,6 @@
 {
   "name": "react-native-hms-map",
-  "version": "0.0.2-u-5",
+  "version": "0.0.2-u-7",
   "description": "A wrapper for the Huawei's native MAP kit SDK",
   "main": "index.js",
   "licenses": [

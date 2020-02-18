@@ -6,7 +6,7 @@ React Native HMS Map component for Android devices with Huawei mobile services (
 
 **WARNING**: Before you can start using the HMS Platform APIs and SDKs, you must register your app in the AppGallery and configure your project, this step cannot be skipped.
 
-See [configuration Instructions](CONFIGURATION.md).
+See [configuration Instructions](https://github.com/hms-dtse-dxb/react-native-hms-map/blob/master/CONFIGURATION.md).
 
 ## Important
 
@@ -14,7 +14,7 @@ This library is wrapper for Huawei's map, it will only work on android devices w
 
 ## Installation
 
-After [configuration](CONFIGURATION.md), install the library from npm:
+After [configuration](https://github.com/hms-dtse-dxb/react-native-hms-map/blob/master/CONFIGURATION.md), install the library from npm:
 
 ```sh
 npm i react-native-hms-map --save
