@@ -1,4 +1,4 @@
-# react-native-hms-maps [![npm version](https://img.shields.io/npm/v/react-native-hms-map.svg?style=flat)](https://www.npmjs.com/package/react-native-hms-map)
+# react-native-hms-map [![npm version](https://img.shields.io/npm/v/react-native-hms-map.svg?style=flat)](https://www.npmjs.com/package/react-native-hms-map)
 
 React Native HMS Map component for Android devices with Huawei mobile services (Huawei/Honor)
 
@@ -53,7 +53,7 @@ react-native link
 ## Usage
 
 ```js
-import HMSMap from 'react-native-hms-maps';
+import HMSMap from 'react-native-hms-map';
 ```
 
 This MapView component is built so that features on the map (such as Markers, Polygons, etc.) are
@@ -187,7 +187,7 @@ zoomLevel = 8;
 animatePressedMarker = marker =>{
   const [newLatitude , newLongitude ] = [this.randomLatitude(),this.randomLongitude()];
   //animate the marker on the map to the new position
-  this.refs.hmsMap.animateMarkerToCoordinate(marker.id,this.newLatitude,this.newLongitude);
+  this.refs.mapView.animateMarkerToCoordinate(marker.id,this.newLatitude,this.newLongitude);
 
   //find pressed marker on the list
   const listItem = this.markers.find( m => m.id === marker.id );
@@ -197,7 +197,7 @@ animatePressedMarker = marker =>{
   listItem.longitude = newLongitude;
 
   //you can move the camera to the new position of the marker
-  this.refs.mapRef.animateCameraToCoordinate(newLat, newLng, zoomLevel;
+  this.refs.mapView.animateCameraToCoordinate(newLat, newLng, zoomLevel;
 }
 
  randomLatitude = () => {
@@ -210,7 +210,7 @@ animatePressedMarker = marker =>{
 
 render() {
   return (
-    <HMSMap ref='hmsMap' markers={this.markers} onMarkerPress={this.animatePressedMarker}  />;
+    <HMSMap ref='mapView' markers={this.markers} onMarkerPress={this.animatePressedMarker}  />;
   );
 }
 ```
@@ -247,7 +247,7 @@ onMarkerPress = (marker) => {
 
 render() {
   return (
-    <HMSMapView
+    <HMSMap
       ref="mapView"
       // props
       uiSettings={{
