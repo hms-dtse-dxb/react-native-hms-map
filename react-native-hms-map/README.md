@@ -87,11 +87,11 @@ BUILDING: 20,
 
 ```jsx
 onMapPress = (coordinate) => {
-  console.log('Map tapped', coordinate);
+  console.log('Map pressed', coordinate);
 };
 render(){
   return (
-    <HMSMap onMapPress={this.onMarkerPress} />;
+    <HMSMap onMapPress={this.onMapPress} />;
   );
 }
 ```
@@ -112,17 +112,45 @@ render(){
 ### Rendering a list of markers on a map
 
 ```jsx
-<HMSMap cameraOptions={this.cameraOptions} markers={this.state.markers} />
+markers = [
+  {
+    id: 1,
+    latitude: 25.5,
+    longitude: 55,
+  },
+  {
+    id: 2,
+    latitude: 50,
+    longitude: -20,
+  },
+];
+render(){
+  return (
+    <HMSMap cameraOptions={this.cameraOptions} markers={this.markers} />;
+  );
+}
 ```
 
 or :
 
 ```jsx
+markers = [
+  {
+    id: 1,
+    latitude: 25.5,
+    longitude: 55,
+  },
+  {
+    id: 2,
+    latitude: 50,
+    longitude: -20,
+  },
+];
 renderMarkers = () => {
   this.refs.mapView.setMarkers(this.markers);
 };
 render(){
-return (
+  return (
     <HMSMap
       ref="mapView"
       cameraOptions={this.cameraOptions}
@@ -137,7 +165,7 @@ return (
 
 ```jsx
 defaultImage = '../assets/defaultPin.png';
-this.markers =[
+markers =[
    {
       id:1,
       latitude:20,
@@ -145,16 +173,21 @@ this.markers =[
       description:"this marker will be drawn with custom image"
       image: '../assets/specialPin.png'
    },  {
-      id:1,
+      id:2,
       latitude:20,
       longitude:20,
       description:"this marker will be shown with default image"
    }
 ];
-
-<HMSMap
- cameraOptions={this.cameraOptions}
-  markers={this.state.markers} />
+render() {
+  return (
+      <HMSMap
+        cameraOptions={this.cameraOptions}
+        defaultMarkerImage={this.defaultImage}
+        markers={this.state.markers}
+       />
+   );
+}
 ```
 
 ### listening to marker press event
@@ -173,15 +206,20 @@ render() {
 ### animate marker to new location
 
 ```jsx
-markers = [{
-     {
-      id:1,
-      latitude:20,
-      longitude:20,
+markers = [
+   {
+      id: 1,
+    latitude: 25.5,
+    longitude: 55,
+  },
+  {
+    id: 2,
+    latitude: 50,
+    longitude: -20,
    }
-}];
-newLatitude = 30;
-newLongitude = 30;
+];
+newLatitude = 55;
+newLongitude = 25;
 zoomLevel = 8;
 
 animatePressedMarker = marker =>{
@@ -197,7 +235,7 @@ animatePressedMarker = marker =>{
   listItem.longitude = newLongitude;
 
   //you can move the camera to the new position of the marker
-  this.refs.mapView.animateCameraToCoordinate(newLat, newLng, zoomLevel;
+  this.refs.mapView.animateCameraToCoordinate(newLat, newLng, zoomLevel);
 }
 
  randomLatitude = () => {
