@@ -69,7 +69,11 @@ BUILDING: 20,
 onMapPress = (coordinate) => {
   console.log('Map tapped', coordinate);
 };
-<HMSMap onMapPress={this.onMarkerPress} />;
+render(){
+  return (
+    <HMSMap onMapPress={this.onMarkerPress} />;
+  );
+}
 ```
 
 ### listening to map long press event
@@ -78,7 +82,11 @@ onMapPress = (coordinate) => {
 onMapLongPress = (coordinate) => {
   console.log('Map long pressed', coordinate);
 };
-<HMSMap onMapLongPress={this.onMapLongPress} />;
+render(){
+  return (
+    <HMSMap onMapLongPress={this.onMapLongPress} />;
+  );
+}
 ```
 
 ### Rendering a list of markers on a map
@@ -93,12 +101,14 @@ or :
 renderMarkers = () => {
   this.refs.mapView.setMarkers(this.markers);
 };
-
-<HMSMap
+render(){
+return (<HMSMap
   ref="mapView"
   cameraOptions={this.cameraOptions}
-  onMapReady={this.renderMarkers}
-/>;
+  onMapReady={this.renderMarkers} />;
+);
+}
+
 ```
 
 ### Rendering a Marker with a custom image
