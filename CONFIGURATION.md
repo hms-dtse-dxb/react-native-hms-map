@@ -143,7 +143,7 @@ Upon completion, the signing certificate fingerprint will take effect immediatel
 - In Android Studio root-level (project-level) build.gradle file, add rules to include the HUAWEI agcp plugin and HUAWEI Maven repository
   ![Image description](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/img/3eb130c2be6bec9d.png)
 
-```
+```groovy
 buildscript {
     repositories {
         // ...
@@ -174,7 +174,7 @@ allprojects {
 - In your module (app-level) build.gradle file (usually app/build.gradle), add a line to the bottom of the file.
   ![Image description](https://developer.huawei.com/consumer/en/codelab/HMSPreparation/img/c3c44aacf89fe135.png)
 
-```
+```groovy
 apply plugin: 'com.android.application'
 // Add the following line
 apply plugin: 'com.huawei.agconnect'  // HUAWEI agconnect Gradle plugin
