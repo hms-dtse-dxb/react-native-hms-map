@@ -71,7 +71,7 @@ props of the map. This can be changed in future releases to provide an intuitive
 />
 ```
 
-zoom must an number (integer) in range [1,20],some zoom level:
+zoom must be a number (integer), in range [1,20], example of zoom levels:
 
 ```JS
 const ZOOM_LEVELS = {
