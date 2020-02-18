@@ -142,7 +142,7 @@ markers = [
   },
   {
     id: 2,
-    latitude: 50,
+    latitude: 50.1243,
     longitude: -20,
   },
 ];
@@ -152,7 +152,7 @@ renderMarkers = () => {
 render(){
   return (
     <HMSMap
-      ref="mapView" 
+      ref="mapView"
       onMapReady={this.renderMarkers}
     />;
   );
@@ -167,20 +167,20 @@ defaultImage = '../assets/defaultPin.png';
 markers =[
    {
       id:1,
-      latitude:20,
-      longitude:20,
-      description:"this marker will be drawn with custom image"
+      latitude:30,
+      longitude:-42.32,
+      description:"this marker will be drawn with a custom image",
       image: '../assets/specialPin.png'
    },  {
       id:2,
-      latitude:20,
-      longitude:20,
+      latitude:40,
+      longitude:34.3214,
       description:"this marker will be shown with default image"
    }
 ];
 render() {
   return (
-      <HMSMap 
+      <HMSMap
         defaultMarkerImage={this.defaultImage}
         markers={this.state.markers}
        />
