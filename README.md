@@ -311,6 +311,9 @@ render() {
 
 ```
 
+## Contribution
+all kind of contributions are welcome :)
+  
 ## Example
 
 To run example:
