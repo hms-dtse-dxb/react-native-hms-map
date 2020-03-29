@@ -1,6 +1,10 @@
+
 # react-native-hms-map [![npm version](https://img.shields.io/npm/v/react-native-hms-map.svg?style=flat)](https://www.npmjs.com/package/react-native-hms-map)
 
 React Native HMS Map component for Android devices with Huawei mobile services (Huawei/Honor)
+
+# THIS LIBRARY IS DEPRECATED AND IT IS NO MORE UNDER MAINTAINANCE
+**THE OFFICIAL PLUGIIN FROM HUAWEI:** [https://developer.huawei.com/consumer/en/doc/development/HMS-Guides/hms-map-v4-createamap-rn](https://developer.huawei.com/consumer/en/doc/development/HMS-Guides/hms-map-v4-createamap-rn)
 
 ## Configuration
 
